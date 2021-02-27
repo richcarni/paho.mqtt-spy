@@ -31,8 +31,7 @@ import javafx.stage.WindowEvent;
 import pl.baczkowicz.spy.ui.panes.PaneVisibilityStatus;
 import pl.baczkowicz.spy.ui.panes.TabController;
 
-import com.sun.javafx.scene.control.behavior.TabPaneBehavior;
-import com.sun.javafx.scene.control.skin.TabPaneSkin;
+import javafx.scene.control.skin.TabPaneSkin;
 
 /**
  * Tab pane utilities.
@@ -46,25 +45,30 @@ public class TabUtils
 	 */
 	public static void requestClose(final Tab tab)
 	{
-		TabPaneBehavior behavior = getBehavior(tab);
-		if (behavior.canCloseTab(tab))
+		// TabPaneBehavior behavior = getBehavior(tab);
+		if (canCloseTab(tab))
 		{
-			behavior.closeTab(tab);
+			closeTab(tab);
 		}
 	}
 
-	/**
-	 * Gets the behavior object for the given tab.
-	 * 
-	 * @param tab The tab for which to get the behaviour
-	 *  
-	 * @return TabPaneBehavior
-	 */
-	private static TabPaneBehavior getBehavior(final Tab tab)
-	{
-		return ((TabPaneSkin) tab.getTabPane().getSkin()).getBehavior();
-	}
-	
+    public static boolean canCloseTab(Tab tab) {
+        Event event = new Event(tab,tab,Tab.TAB_CLOSE_REQUEST_EVENT);
+        Event.fireEvent(tab, event);
+        return ! event.isConsumed();
+    }
+
+    public static void closeTab(Tab tab) {
+        TabPane tabPane = tab.getTabPane();
+        // only switch to another tab if the selected tab is the one we're closing
+        int index = tabPane.getTabs().indexOf(tab);
+        if (index != -1) {
+            tabPane.getTabs().remove(index);
+        }
+        if (tab.getOnClosed() != null) {
+            Event.fireEvent(tab, new Event(Tab.CLOSED_EVENT));
+        }
+    }
 
 	private static Tab copyTab(final Tab tabToCopy, final ContextMenu contextMenu, 
 			final TabController controller, final TabPane tabPane)

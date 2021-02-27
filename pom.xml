@@ -19,7 +19,7 @@
 		<module>spy-common</module> 
 		<module>spy-common-ui</module> 
 		<module>mqtt-spy-common</module> 
-		<module>mqtt-spy-daemon</module>
+		<!--<module>mqtt-spy-daemon</module>-->
 		<module>mqtt-spy</module>  
 	</modules> 
 
